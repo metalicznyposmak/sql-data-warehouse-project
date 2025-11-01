@@ -34,7 +34,7 @@ SELECT
         ELSE 'Unspecified'
     END AS prd_line,
     prd_start_dt,
-    prd_end_dt
+    DATEADD(DAY, -1, LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt)) AS prd_end_dt
 FROM bronze.crm_prd_info
 
 SELECT *
@@ -49,6 +49,6 @@ SELECT
     prd_line,
     prd_start_dt,
     prd_end_dt,
-LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt) AS prd_end_dt_test
+DATEADD(DAY, -1, LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt)) AS prd_end_dt_test
 FROM bronze.crm_prd_info
 WHERE prd_key IN ('AC-HE-HL-U509-R', 'AC-HE-HL-U509')
