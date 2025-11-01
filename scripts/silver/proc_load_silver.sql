@@ -46,7 +46,13 @@ SELECT
     SUBSTRING(prd_key, 7, LEN(prd_key)) AS [prd_key],
     prd_nm,
     ISNULL(prd_cost, 0) AS prd_cost,
-    prd_line,
+    CASE
+        WHEN UPPER(TRIM(prd_line)) LIKE 'M' THEN 'Mountain'
+        WHEN UPPER(TRIM(prd_line)) LIKE 'R' THEN 'Road'
+        WHEN UPPER(TRIM(prd_line)) LIKE 'S' THEN 'Sport'
+        WHEN UPPER(TRIM(prd_line)) LIKE 'T' THEN 'Touring'
+        ELSE 'Unspecified'
+    END AS prd_line,
     prd_start_dt,
-    prd_end_dt
+    DATEADD(DAY, -1, LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt)) AS prd_end_dt
 FROM bronze.crm_prd_info
