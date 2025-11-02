@@ -1,6 +1,6 @@
-PRINT('==============================================')
-PRINT('Inserting clean data into silver.crm_cust_info')
-PRINT('==============================================')
+PRINT('>> Truncating table silver.crm_cust_info')
+TRUNCATE TABLE silver.crm_cust_info
+PRINT('>> Inserting clean data into silver.crm_cust_info')
 
 INSERT INTO silver.crm_cust_info (
     cst_id,
@@ -35,9 +35,10 @@ FROM bronze.crm_cust_info
 WHERE cst_id IS NOT NULL
 )t WHERE flag_last = 1;
 
-PRINT('==============================================')
-PRINT('Inserting clean data into silver.crm_prd_info')
-PRINT('==============================================')
+PRINT('>> Truncating table silver.crm_prd_info')
+TRUNCATE TABLE silver.crm_prd_info
+PRINT('>> Inserting clean data into silver.crm_prd_info')
+
 
 INSERT INTO silver.crm_prd_info (
    prd_id,
@@ -66,9 +67,9 @@ SELECT
     DATEADD(DAY, -1, LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt)) AS prd_end_dt
 FROM bronze.crm_prd_info;
 
-PRINT('==============================================')
-PRINT('Inserting clean data into silver.crm_sales_details')
-PRINT('==============================================')
+PRINT('>> Truncating table silver.crm_sales_details')
+TRUNCATE TABLE silver.crm_sales_details
+PRINT('>> Inserting clean data into silver.crm_sales_details')
 
 INSERT INTO silver.crm_sales_details(
     sls_ord_num,
@@ -123,9 +124,10 @@ SELECT
     END as sls_price
 FROM bronze.crm_sales_details;
 
-PRINT('==============================================')
-PRINT('Inserting clean data into silver.erp_cust_az12')
-PRINT('==============================================')
+PRINT('>> Truncating table silver.erp_cust_az12')
+TRUNCATE TABLE silver.erp_cust_az12
+PRINT('>> Inserting clean data into silver.erp_cust_az12')
+
 
 INSERT INTO silver.erp_cust_az12 (
     CID,
@@ -149,6 +151,41 @@ SELECT
 FROM
     bronze.erp_cust_az12;
 
-PRINT('==============================================')
-PRINT('Inserting clean data into silver.erp_cust_az12')
-PRINT('==============================================')
+PRINT('>> Truncating table silver.erp_loc_a101')
+TRUNCATE TABLE silver.erp_loc_a101
+PRINT('>> Inserting clean data into silver.erp_loc_a101')
+
+INSERT INTO silver.erp_loc_a101(
+    CID,
+    CNTRY
+
+)
+SELECT 
+    REPLACE(CID, '-', '') AS CID,
+    CASE
+        WHEN UPPER(TRIM(CNTRY)) LIKE 'DE' THEN 'Germany' 
+        WHEN UPPER(TRIM(CNTRY)) IN ('US', 'USA') THEN 'United States'
+        WHEN UPPER(TRIM(CNTRY)) IS NULL THEN 'n/a'
+        WHEN UPPER(TRIM(CNTRY)) LIKE '' THEN 'n/a'
+        ELSE CNTRY
+    END AS CNTRY
+FROM bronze.erp_loc_a101
+
+PRINT('>> Truncating table silver.erp_px_cat_g1v2')
+TRUNCATE TABLE silver.erp_px_cat_g1v2
+PRINT('>>Inserting clean data into silver.erp_px_cat_g1v2')
+
+INSERT INTO silver.erp_px_cat_g1v2(
+    ID,
+    CAT,
+    SUBCAT,
+    MAINTENANCE
+)
+
+SELECT
+    ID,
+    CAT,
+    SUBCAT,
+    MAINTENANCE
+FROM
+    bronze.erp_px_cat_g1v2
