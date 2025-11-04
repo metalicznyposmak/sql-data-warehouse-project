@@ -244,7 +244,13 @@ BEGIN
         )
 
         SELECT
-            ID,
+            -- The category ID in this table had to be swapped to 'CO_PE' becasuse it is like that in
+            -- products table, problem occured when joining tables in gold layer, when we had records of products like pedals
+            -- but there was no category with this id ('CO_PE') in category table.
+            CASE
+                WHEN ID LIKE 'CO_PD' THEN 'CO_PE'
+                ELSE ID
+            END AS ID,
             CAT,
             SUBCAT,
             MAINTENANCE
